@@ -133,16 +133,31 @@ def knn_classifier(training_data, test_data, training_labels, num_neighbors):
         prediction label
     
     '''
-    pass             
+    distance_array = []
+    
+    for i in range(len(training_data)):
+        distance_to_test_data = euclidian_distance(training_data[i], test_data)
+        distance_training_label_tuple = (distance_to_test_data, training_labels[i])
+
+        distance_array.append(distance_training_label_tuple)
+
+    distance_array = sorted(distance_array)
+
+    predicted_label_array = []
+    for i in range(num_neighbors):
+        predicted_label_array.append(distance_array[i])
+
+    return predicted_label_array
 
 def euclidian_distance(point1, point2):
     #point1 numpy training point, point2 numpy test point
+    print("training point:", point1)
     distance = 0
     for i in range(len(point1)):
         distance += (point1[i] - point2[i])**2
     
     distance = math.sqrt(distance)
-
+    print("distance to test point:", distance)
     return distance    
 
 def main():
@@ -155,14 +170,23 @@ def main():
     # labels = data_frame[0]
     # labels = np.array(labels)
 
-    point_1 = [1,2,3]
-    point_2 = [4,5,6]
+    point_1 = [[39.1, 18.7, 181.0],
+               [39.5, 17.4, 186.0],
+               [47.2, 13.7, 214.0],
+               [50.4, 15.7, 222.0]]
+    
+    point_2 = [39.3, 20.6, 190.0]
 
-    point_1 = np.array(point_1)
-    point_2 = np.array(point_2)
+    training_labels = [0,0,1,1]
 
-    distance = euclidian_distance(point_1, point_2)
-    print(distance)
+    # point_1 = np.array(point_1)
+    # point_2 = np.array(point_2)
+
+    # distance = euclidian_distance(point_1, point_2)
+
+    predicted_label = knn_classifier(point_1, point_2, training_labels, 1)
+    print("")
+    print(predicted_label)
 
 
 
