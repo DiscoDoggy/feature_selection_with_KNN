@@ -65,6 +65,45 @@ def forward_selection(feature_vectors):
 
     print("\nFinished search!! The best feature subset is", current_feature_set,"which has an accuracy of", max_accuracy)
 
+def backward_elimination(feature_vectors):
+    current_feature_set = feature_vectors.copy() #dont wanna change feature_vectors
+    max_accuracy = -1
+    current_feature_set.remove(0)
+
+    for i in range(0, len(feature_vectors)):
+        curr_accuracy = 0
+        considered_features_to_remove = []
+
+        for j in range (0, len(feature_vectors)):
+
+            if j in current_feature_set:
+                
+                temp_curr_set = current_feature_set.copy()
+                temp_curr_set.remove(j)
+                curr_accuracy = random_accuracy(temp_curr_set)
+                temp_curr_set_accuracy_tuple = (temp_curr_set, curr_accuracy)
+                considered_features_to_remove.append(temp_curr_set_accuracy_tuple)
+
+                print("Using feature(s)", temp_curr_set, "accuracy is", curr_accuracy)
+        
+        candidate_feature = get_max_accuracy_tuple(considered_features_to_remove)
+
+        print("\n")
+
+        if candidate_feature[1] > max_accuracy:
+            print("Feature set", candidate_feature[0], "was best, accuracy is", candidate_feature[1], "\n")
+            max_accuracy = candidate_feature[1]
+            current_feature_set = candidate_feature[0].copy()
+        
+        else:
+            break
+
+
+    print("\nFinished search!! The best feature subset is", current_feature_set,"which has an accuracy of", max_accuracy)
+
+
+
+
 def get_max_accuracy_tuple(tuple_list):
     curr_max = -1
     curr_max_index = -1
@@ -91,8 +130,10 @@ def main():
     data_frame = read_in_data()
 
     temporary_data_list = [0,1,2,3,4,5,6,7,8,9]
-    forward_selection(temporary_data_list)
+    backward_elimination(temporary_data_list)
 
+    # labels = data_frame[0]
+    # print(labels)
 
     #print("Feature Count:", int_feature_count, ",", "Algorithm Choice", int_algo_choice)
 
