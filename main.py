@@ -5,7 +5,6 @@ import math
 
 def read_in_data():
     data_frame = pd.read_csv("small-test-dataset.txt",header = None, delim_whitespace=True)
-    #data_frame = data_frame.apply(pd.to_numeric, errors = 'coerce')
     print(data_frame)
 
     return data_frame
@@ -122,7 +121,7 @@ def get_max_accuracy_tuple(tuple_list):
     else:
         return tuple_list[curr_max_index]
 
-def knn_classifier(training_data, test_data, training_labels, num_neighbors):
+def knn_classifier(training_data, test_data, training_label, num_neighbors):
     '''
     arguments:
         test_data (1d numpy array) : singular test point
@@ -137,8 +136,8 @@ def knn_classifier(training_data, test_data, training_labels, num_neighbors):
     distance_array = []
     
     for i in range(len(training_data)):
-        distance_to_test_data = euclidian_distance(training_data[i], test_data)
-        distance_training_label_tuple = (distance_to_test_data, training_labels[i])
+        distance_to_test_data = euclidian_distance(training_data, test_data)
+        distance_training_label_tuple = (distance_to_test_data, training_label)
 
         distance_array.append(distance_training_label_tuple)
 
@@ -166,6 +165,7 @@ def euclidian_distance(point1, point2):
 def leave_one_out_cross_validation(data_set, considered_feature_set):
     number_correctly_classified = 0
     considered_feature_set_values = []
+    data_set_labels = data_set[0].values
     
     # for i in range(len(considered_feature_set)):
     #     considered_feature_set_values.append(data_set[considered_feature_set[i]])
@@ -173,8 +173,22 @@ def leave_one_out_cross_validation(data_set, considered_feature_set):
     # considered_feature_set_values = np.array(considered_feature_set_values)
 
     considered_feature_set_values = data_set[considered_feature_set].values
-    print(considered_feature_set_values)
-    print((considered_feature_set_values[0][0]))
+    print(considered_feature_set_values[1])
+
+    for i in range(len(considered_feature_set_values)):
+        object_to_classify = considered_feature_set_values[i]
+        object_to_classify_label = data_set_labels[i]
+
+        for k in range (len(considered_feature_set_values)):
+            
+            if k != i:
+                predicted_label = knn_classifier(considered_feature_set_values[k], object_to_classify,data_set[k], 1)
+
+        if object_to_classify_label == predicted_label[0][1]:
+            number_correctly_classified += 1
+    
+    accuracy = number_correctly_classified / len(considered_feature_set_values)
+    return accuracy
 
 
 def main():
