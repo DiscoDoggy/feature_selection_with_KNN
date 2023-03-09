@@ -1,5 +1,7 @@
 import random as rand
 import pandas as pd
+import numpy as np
+import math
 
 def read_in_data():
     data_frame = pd.read_csv("small-test-dataset.txt",header = None,sep='  ')
@@ -120,20 +122,50 @@ def get_max_accuracy_tuple(tuple_list):
         return tuple_list[curr_max_index]
 
 def knn_classifier(training_data, test_data, training_labels, num_neighbors):
+    '''
+    arguments:
+        test_data (1d numpy array) : singular test point
+        training data(2d numpy array) : each row is a training point
+        training_labels (1d numpy array): each index is a row's training label
+        num_neighbors(int): number of neighbors
+
+    returns:
+        prediction label
+    
+    '''
     pass             
 
 def euclidian_distance(point1, point2):
-    pass
+    #point1 numpy training point, point2 numpy test point
+    distance = 0
+    for i in range(len(point1)):
+        distance += (point1[i] - point2[i])**2
+    
+    distance = math.sqrt(distance)
+
+    return distance    
 
 def main():
     #int_feature_count, int_algo_choice = get_user_input()
     data_frame = read_in_data()
 
-    temporary_data_list = [0,1,2,3,4,5,6,7,8,9]
-    backward_elimination(temporary_data_list)
+    # temporary_data_list = [0,1,2,3,4,5,6,7,8,9]
+    # backward_elimination(temporary_data_list)
 
     # labels = data_frame[0]
-    # print(labels)
+    # labels = np.array(labels)
+
+    point_1 = [1,2,3]
+    point_2 = [4,5,6]
+
+    point_1 = np.array(point_1)
+    point_2 = np.array(point_2)
+
+    distance = euclidian_distance(point_1, point_2)
+    print(distance)
+
+
+
 
     #print("Feature Count:", int_feature_count, ",", "Algorithm Choice", int_algo_choice)
 
