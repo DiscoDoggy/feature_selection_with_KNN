@@ -4,7 +4,8 @@ import numpy as np
 import math
 
 def read_in_data():
-    data_frame = pd.read_csv("small-test-dataset.txt",header = None,sep='  ')
+    data_frame = pd.read_csv("small-test-dataset.txt",header = None, delim_whitespace=True)
+    #data_frame = data_frame.apply(pd.to_numeric, errors = 'coerce')
     print(data_frame)
 
     return data_frame
@@ -153,12 +154,28 @@ def euclidian_distance(point1, point2):
     #point1 numpy training point, point2 numpy test point
     print("training point:", point1)
     distance = 0
+
     for i in range(len(point1)):
         distance += (point1[i] - point2[i])**2
     
     distance = math.sqrt(distance)
+
     print("distance to test point:", distance)
-    return distance    
+    return distance
+
+def leave_one_out_cross_validation(data_set, considered_feature_set):
+    number_correctly_classified = 0
+    considered_feature_set_values = []
+    
+    # for i in range(len(considered_feature_set)):
+    #     considered_feature_set_values.append(data_set[considered_feature_set[i]])
+    
+    # considered_feature_set_values = np.array(considered_feature_set_values)
+
+    considered_feature_set_values = data_set[considered_feature_set].values
+    print(considered_feature_set_values)
+    print((considered_feature_set_values[0][0]))
+
 
 def main():
     #int_feature_count, int_algo_choice = get_user_input()
@@ -170,24 +187,25 @@ def main():
     # labels = data_frame[0]
     # labels = np.array(labels)
 
-    point_1 = [[39.1, 18.7, 181.0],
-               [39.5, 17.4, 186.0],
-               [47.2, 13.7, 214.0],
-               [50.4, 15.7, 222.0]]
+    # point_1 = [[39.1, 18.7, 181.0],
+    #            [39.5, 17.4, 186.0],
+    #            [47.2, 13.7, 214.0],
+    #            [50.4, 15.7, 222.0]]
     
-    point_2 = [39.3, 20.6, 190.0]
+    # point_2 = [39.3, 20.6, 190.0]
 
-    training_labels = [0,0,1,1]
+    # training_labels = [0,0,1,1]
 
     # point_1 = np.array(point_1)
     # point_2 = np.array(point_2)
 
-    # distance = euclidian_distance(point_1, point_2)
+    # # distance = euclidian_distance(point_1, point_2)
 
-    predicted_label = knn_classifier(point_1, point_2, training_labels, 1)
-    print("")
-    print(predicted_label)
-
+    # predicted_label = knn_classifier(point_1, point_2, training_labels, 1)
+    # print("")
+    # print(predicted_label)
+    considered_feature_set = [1, 2, 3]
+    leave_one_out_cross_validation(data_frame, considered_feature_set)
 
 
 
