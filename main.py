@@ -35,7 +35,7 @@ def random_accuracy(current_feature_set):
 # feature vectors is a 2d vector where outer vector is each feature
 # and the inner vectors are the values of the features
 
-def new_feature_search(feature_vectors):
+def forward_selection(feature_vectors):
     current_feature_set = []
     max_accuracy = -1
 
@@ -91,7 +91,7 @@ def main():
     data_frame = read_in_data()
 
     temporary_data_list = [0,1,2,3,4,5,6,7,8,9]
-    new_feature_search(temporary_data_list)
+    forward_selection(temporary_data_list)
 
 
     #print("Feature Count:", int_feature_count, ",", "Algorithm Choice", int_algo_choice)
