@@ -4,7 +4,7 @@ import numpy as np
 import math
 
 def read_in_data():
-    data_frame = pd.read_csv("small-test-dataset.txt",header = None, delim_whitespace=True)
+    data_frame = pd.read_csv("CS170_Spring_2022_Small_data__35.txt",header = None, delim_whitespace=True)
     #print(data_frame)
 
     return data_frame
@@ -197,7 +197,7 @@ def leave_one_out_cross_validation(data_set, considered_feature_set):
         if object_to_classify_label == predicted_label[0][1]:
             number_correctly_classified += 1
     
-    accuracy = number_correctly_classified / len(considered_feature_set_values)
+    accuracy = number_correctly_classified / len(data_set)
     return accuracy
 
 def leave_one_out(data_set, considered_feature_set):
@@ -225,12 +225,12 @@ def leave_one_out(data_set, considered_feature_set):
                     nn_location = k
                     nn_neighbor_label = data_set_labels[k]
 
-            if object_to_classify_label == nn_neighbor_label:
-                number_correctly_classified += 1
+        if object_to_classify_label == nn_neighbor_label:
+            number_correctly_classified += 1
 
 
     accuracy = number_correctly_classified / len(data_set_labels)
-    return accuracy
+    return accuracy * 100
 
 def feature_normalization(data_frame):
     normalized_data_frame = data_frame.copy()
@@ -240,6 +240,10 @@ def feature_normalization(data_frame):
 
     return normalized_data_frame
 
+def open_file():
+    file_handle = open("results.txt", "a")
+    return file_handle
+
 def main():
     #int_feature_count, int_algo_choice = get_user_input()
     data_frame = read_in_data()
@@ -247,7 +251,8 @@ def main():
     data_frame = feature_normalization(data_frame)
     print(data_frame)
 
-    backward_elimination(data_frame, len(data_frame.columns))
+    #backward_elimination(data_frame, len(data_frame.columns))
+    forward_selection(data_frame, len(data_frame.columns))
 
 
     # label_values = data_frame[0].values
