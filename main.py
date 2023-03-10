@@ -5,7 +5,7 @@ import math
 
 def read_in_data():
     data_frame = pd.read_csv("small-test-dataset.txt",header = None, delim_whitespace=True)
-    print(data_frame)
+    #print(data_frame)
 
     return data_frame
 
@@ -37,20 +37,20 @@ def random_accuracy(current_feature_set):
 # feature vectors is a 2d vector where outer vector is each feature
 # and the inner vectors are the values of the features
 
-def forward_selection(feature_vectors):
+def forward_selection(data_frame, num_columns):
     current_feature_set = []
     max_accuracy = -1
 
-    for i in range(1, len(feature_vectors)):
+    for i in range(1, num_columns):
         curr_accuracy = 0
         considered_features = []
 
-        for j in range(1, len(feature_vectors)):
+        for j in range(1, num_columns):
             
             if j not in current_feature_set:
                 temp_curr_set = current_feature_set.copy()
                 temp_curr_set.append(j)
-                curr_accuracy = leave_one_out_cross_validation(temp_curr_set)
+                curr_accuracy = leave_one_out(data_frame, temp_curr_set)
                 temp_curr_set_accuracy_tuple = (temp_curr_set, curr_accuracy)
                 considered_features.append(temp_curr_set_accuracy_tuple)
 
@@ -67,22 +67,34 @@ def forward_selection(feature_vectors):
 
     print("\nFinished search!! The best feature subset is", current_feature_set,"which has an accuracy of", max_accuracy)
 
-def backward_elimination(feature_vectors):
-    current_feature_set = feature_vectors.copy() #dont wanna change feature_vectors
-    max_accuracy = -1
-    current_feature_set.pop(0)
+# def map_feature_idx_to_feature_vals(all_feature_data, curr_feature_set_values, curr_feature_set_idxs):
+#     new_curr_feature_set_values = []
 
-    for i in range(0, len(feature_vectors)):
+#     for i in range(len(curr_feature_set_idxs)):
+#         new_curr_feature_set_values.append()
+    
+
+
+def backward_elimination(data_frame,num_columns):
+
+    current_feature_set = []
+
+    for i in range(1,num_columns):
+        current_feature_set.append(i)
+
+    max_accuracy = -1
+
+    for i in range(1, num_columns):
         curr_accuracy = 0
         considered_features_to_remove = []
 
-        for j in range (0, len(feature_vectors)):
+        for j in range (1, num_columns):
 
             if j in current_feature_set:
                 
                 temp_curr_set = current_feature_set.copy()
                 temp_curr_set.remove(j)
-                curr_accuracy = leave_one_out_cross_validation(temp_curr_set)
+                curr_accuracy = leave_one_out(data_frame, temp_curr_set)
                 temp_curr_set_accuracy_tuple = (temp_curr_set, curr_accuracy)
                 considered_features_to_remove.append(temp_curr_set_accuracy_tuple)
 
@@ -142,7 +154,6 @@ def knn_classifier(training_data, test_data, training_label, num_neighbors):
     distance_array.append(distance_training_label_tuple)
 
     distance_array = sorted(distance_array)
-
     predicted_label_array = []
     for i in range(num_neighbors):
         predicted_label_array.append(distance_array[i])
@@ -151,7 +162,7 @@ def knn_classifier(training_data, test_data, training_label, num_neighbors):
 
 def euclidian_distance(point1, point2):
     #point1 numpy training point, point2 numpy test point
-    print("training point:", point1)
+    #print("training point:", point1)
     distance = 0
 
     for i in range(len(point1)):
@@ -159,7 +170,6 @@ def euclidian_distance(point1, point2):
     
     distance = math.sqrt(distance)
 
-    print("distance to test point:", distance)
     return distance
 
 def leave_one_out_cross_validation(data_set, considered_feature_set):
@@ -173,7 +183,7 @@ def leave_one_out_cross_validation(data_set, considered_feature_set):
     # considered_feature_set_values = np.array(considered_feature_set_values)
 
     considered_feature_set_values = data_set[considered_feature_set].values
-    print(considered_feature_set_values[1])
+    print(considered_feature_set_values)
 
     for i in range(len(considered_feature_set_values)):
         object_to_classify = considered_feature_set_values[i]
@@ -190,19 +200,71 @@ def leave_one_out_cross_validation(data_set, considered_feature_set):
     accuracy = number_correctly_classified / len(considered_feature_set_values)
     return accuracy
 
-def intialize_feature_set(data_frame):
-    starting_feature_set = data_frame[0:].values
-    return starting_feature_set
+def leave_one_out(data_set, considered_feature_set):
 
+    number_correctly_classified = 0
+    considered_feature_set_values = []
+    considered_feature_set_values = data_set[considered_feature_set].values
+    data_set_labels = data_set[0].values
+
+    for i in range(len(considered_feature_set_values)):
+        object_to_classify = considered_feature_set_values[i]
+        object_to_classify_label = data_set_labels[i]
+        nn_neighbor_label = -1
+        
+        nn_dist = 999999
+        nn_location = 999999
+
+        for k in range(len(considered_feature_set_values)):
+                
+            if k != i:
+
+                distance = euclidian_distance(object_to_classify, considered_feature_set_values[k])
+                if distance < nn_dist:
+                    nn_dist = distance
+                    nn_location = k
+                    nn_neighbor_label = data_set_labels[k]
+
+            if object_to_classify_label == nn_neighbor_label:
+                number_correctly_classified += 1
+
+
+    accuracy = number_correctly_classified / len(data_set_labels)
+    return accuracy
+
+def feature_normalization(data_frame):
+    normalized_data_frame = data_frame.copy()
+
+    for column in range(1, len(normalized_data_frame.columns)):
+        normalized_data_frame[column] = (normalized_data_frame[column] - normalized_data_frame[column].mean()) / normalized_data_frame[column].std()
+
+    return normalized_data_frame
 
 def main():
     #int_feature_count, int_algo_choice = get_user_input()
     data_frame = read_in_data()
+    #print(data_frame)
+    data_frame = feature_normalization(data_frame)
+    print(data_frame)
 
-    print("starting_feature_set:")
-    starting_feature_set = intialize_feature_set(data_frame)
+    backward_elimination(data_frame, len(data_frame.columns))
 
-    print(starting_feature_set)
+
+    # label_values = data_frame[0].values
+    # twos_count = 0
+    # ones_count = 0
+
+    # for i in label_values:
+    #     if i == 2:
+    #         twos_count += 1
+    #     elif i == 1:
+    #         ones_count += 1
+    
+    # accuracy = twos_count / len(label_values)
+    # print(accuracy)
+
+    #print(len(data_frame.columns))
+    #forward_selection(data_frame, len(data_frame.columns))
 
     # temporary_data_list = [0,1,2,3,4,5,6,7,8,9]
     # backward_elimination(temporary_data_list)
