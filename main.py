@@ -40,6 +40,7 @@ def random_accuracy(current_feature_set):
 def forward_selection(data_frame, num_columns):
     current_feature_set = []
     max_accuracy = -1
+    file_handle = open_file()
 
     for i in range(1, num_columns):
         curr_accuracy = 0
@@ -55,18 +56,24 @@ def forward_selection(data_frame, num_columns):
                 considered_features.append(temp_curr_set_accuracy_tuple)
 
                 print("Using feature(s)", temp_curr_set, "accuracy is", curr_accuracy)
+                content_to_write = "Using feature(s) " + str(temp_curr_set) + "accuracy is " + str(curr_accuracy) + "\n"
+                file_handle.write(content_to_write)
 
-        
         candidate_feature = get_max_accuracy_tuple(considered_features)
        # print(candidate_feature)
 
         if candidate_feature[1] > max_accuracy:
             print("\nFeature set", candidate_feature[0], "was best, accuracy is", candidate_feature[1], "\n")
+
+            content_to_write = "\nFeature set " + str(candidate_feature[0]) + " was best, accuracy is " + str(candidate_feature[1]) +"\n\n"
+            file_handle.write(content_to_write)
+
             max_accuracy = candidate_feature[1]
             current_feature_set = candidate_feature[0].copy()
 
     print("\nFinished search!! The best feature subset is", current_feature_set,"which has an accuracy of", max_accuracy)
-
+    content_to_write = "\nFinished search!! The best feature subset is " + str(current_feature_set) + " which has an accuracy of " + str(max_accuracy)
+    file_handle.write(content_to_write)
 # def map_feature_idx_to_feature_vals(all_feature_data, curr_feature_set_values, curr_feature_set_idxs):
 #     new_curr_feature_set_values = []
 
@@ -78,6 +85,8 @@ def forward_selection(data_frame, num_columns):
 def backward_elimination(data_frame,num_columns):
 
     current_feature_set = []
+    file_handle = open_file()
+
 
     for i in range(1,num_columns):
         current_feature_set.append(i)
@@ -99,6 +108,8 @@ def backward_elimination(data_frame,num_columns):
                 considered_features_to_remove.append(temp_curr_set_accuracy_tuple)
 
                 print("Using feature(s)", temp_curr_set, "accuracy is", curr_accuracy)
+                content_to_write = "Using feature(s) " + str(temp_curr_set) + "accuracy is " + str(curr_accuracy) + "\n"
+                file_handle.write(content_to_write)
         
         candidate_feature = get_max_accuracy_tuple(considered_features_to_remove)
 
@@ -106,6 +117,10 @@ def backward_elimination(data_frame,num_columns):
 
         if candidate_feature[1] > max_accuracy:
             print("Feature set", candidate_feature[0], "was best, accuracy is", candidate_feature[1], "\n")
+            
+            content_to_write = "\nFeature set " + str(candidate_feature[0]) + " was best, accuracy is " + str(candidate_feature[1]) +"\n\n"
+            file_handle.write(content_to_write)
+
             max_accuracy = candidate_feature[1]
             current_feature_set = candidate_feature[0].copy()
         
@@ -114,7 +129,8 @@ def backward_elimination(data_frame,num_columns):
 
 
     print("\nFinished search!! The best feature subset is", current_feature_set,"which has an accuracy of", max_accuracy)
-
+    content_to_write = "\nFinished search!! The best feature subset is " + str(current_feature_set) + " which has an accuracy of " + str(max_accuracy)
+    file_handle.write(content_to_write)
 
 
 
@@ -246,64 +262,18 @@ def open_file():
 
 def main():
     #int_feature_count, int_algo_choice = get_user_input()
+    file_handle = open("results.txt", "w")
+    file_handle.close()
+
     data_frame = read_in_data()
     #print(data_frame)
     data_frame = feature_normalization(data_frame)
     print(data_frame)
 
-    #backward_elimination(data_frame, len(data_frame.columns))
-    forward_selection(data_frame, len(data_frame.columns))
-
-
-    # label_values = data_frame[0].values
-    # twos_count = 0
-    # ones_count = 0
-
-    # for i in label_values:
-    #     if i == 2:
-    #         twos_count += 1
-    #     elif i == 1:
-    #         ones_count += 1
-    
-    # accuracy = twos_count / len(label_values)
-    # print(accuracy)
-
-    #print(len(data_frame.columns))
+    backward_elimination(data_frame, len(data_frame.columns))
     #forward_selection(data_frame, len(data_frame.columns))
 
-    # temporary_data_list = [0,1,2,3,4,5,6,7,8,9]
-    # backward_elimination(temporary_data_list)
-
-    # labels = data_frame[0]
-    # labels = np.array(labels)
-
-    # point_1 = [[39.1, 18.7, 181.0],
-    #            [39.5, 17.4, 186.0],
-    #            [47.2, 13.7, 214.0],
-    #            [50.4, 15.7, 222.0]]
-    
-    # point_2 = [39.3, 20.6, 190.0]
-
-    # training_labels = [0,0,1,1]
-
-    # point_1 = np.array(point_1)
-    # point_2 = np.array(point_2)
-
-    # # distance = euclidian_distance(point_1, point_2)
-
-    # predicted_label = knn_classifier(point_1, point_2, training_labels, 1)
-    # print("")
-    # print(predicted_label)
-    # considered_feature_set = [1, 2, 3]
-    # print("ACCURACY:", accuracy)
-
-
-
-    #print("Feature Count:", int_feature_count, ",", "Algorithm Choice", int_algo_choice)
-
-
-
-
+    file_handle.close()
 
 main()
 
