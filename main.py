@@ -50,7 +50,7 @@ def forward_selection(feature_vectors):
             if j not in current_feature_set:
                 temp_curr_set = current_feature_set.copy()
                 temp_curr_set.append(j)
-                curr_accuracy = random_accuracy(temp_curr_set)
+                curr_accuracy = leave_one_out_cross_validation(temp_curr_set)
                 temp_curr_set_accuracy_tuple = (temp_curr_set, curr_accuracy)
                 considered_features.append(temp_curr_set_accuracy_tuple)
 
@@ -70,7 +70,7 @@ def forward_selection(feature_vectors):
 def backward_elimination(feature_vectors):
     current_feature_set = feature_vectors.copy() #dont wanna change feature_vectors
     max_accuracy = -1
-    current_feature_set.remove(0)
+    current_feature_set.pop(0)
 
     for i in range(0, len(feature_vectors)):
         curr_accuracy = 0
@@ -82,7 +82,7 @@ def backward_elimination(feature_vectors):
                 
                 temp_curr_set = current_feature_set.copy()
                 temp_curr_set.remove(j)
-                curr_accuracy = random_accuracy(temp_curr_set)
+                curr_accuracy = leave_one_out_cross_validation(temp_curr_set)
                 temp_curr_set_accuracy_tuple = (temp_curr_set, curr_accuracy)
                 considered_features_to_remove.append(temp_curr_set_accuracy_tuple)
 
@@ -135,11 +135,11 @@ def knn_classifier(training_data, test_data, training_label, num_neighbors):
     '''
     distance_array = []
     
-    for i in range(len(training_data)):
-        distance_to_test_data = euclidian_distance(training_data, test_data)
-        distance_training_label_tuple = (distance_to_test_data, training_label)
+    #for i in range(len(training_data)):
+    distance_to_test_data = euclidian_distance(training_data, test_data)
+    distance_training_label_tuple = (distance_to_test_data, training_label)
 
-        distance_array.append(distance_training_label_tuple)
+    distance_array.append(distance_training_label_tuple)
 
     distance_array = sorted(distance_array)
 
@@ -182,7 +182,7 @@ def leave_one_out_cross_validation(data_set, considered_feature_set):
         for k in range (len(considered_feature_set_values)):
             
             if k != i:
-                predicted_label = knn_classifier(considered_feature_set_values[k], object_to_classify,data_set[k], 1)
+                predicted_label = knn_classifier(considered_feature_set_values[k], object_to_classify,data_set_labels[k], 1)
 
         if object_to_classify_label == predicted_label[0][1]:
             number_correctly_classified += 1
@@ -190,10 +190,19 @@ def leave_one_out_cross_validation(data_set, considered_feature_set):
     accuracy = number_correctly_classified / len(considered_feature_set_values)
     return accuracy
 
+def intialize_feature_set(data_frame):
+    starting_feature_set = data_frame[0:].values
+    return starting_feature_set
+
 
 def main():
     #int_feature_count, int_algo_choice = get_user_input()
     data_frame = read_in_data()
+
+    print("starting_feature_set:")
+    starting_feature_set = intialize_feature_set(data_frame)
+
+    print(starting_feature_set)
 
     # temporary_data_list = [0,1,2,3,4,5,6,7,8,9]
     # backward_elimination(temporary_data_list)
@@ -218,8 +227,8 @@ def main():
     # predicted_label = knn_classifier(point_1, point_2, training_labels, 1)
     # print("")
     # print(predicted_label)
-    considered_feature_set = [1, 2, 3]
-    leave_one_out_cross_validation(data_frame, considered_feature_set)
+    # considered_feature_set = [1, 2, 3]
+    # print("ACCURACY:", accuracy)
 
 
 
