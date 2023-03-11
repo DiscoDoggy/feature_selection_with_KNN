@@ -1,0 +1,32 @@
+Using feature(s) [1]accuracy is 56.99999999999999
+Using feature(s) [2]accuracy is 54.0
+Using feature(s) [3]accuracy is 68.0
+Using feature(s) [4]accuracy is 65.0
+Using feature(s) [5]accuracy is 75.0
+Using feature(s) [6]accuracy is 61.0
+Using feature(s) [7]accuracy is 62.0
+Using feature(s) [8]accuracy is 60.0
+Using feature(s) [9]accuracy is 66.0
+
+Feature set [5] was best, accuracy is 75.0
+
+Using feature(s) [5, 1]accuracy is 76.0
+Using feature(s) [5, 2]accuracy is 80.0
+Using feature(s) [5, 3]accuracy is 92.0
+Using feature(s) [5, 4]accuracy is 75.0
+Using feature(s) [5, 6]accuracy is 79.0
+Using feature(s) [5, 7]accuracy is 80.0
+Using feature(s) [5, 8]accuracy is 77.0
+Using feature(s) [5, 9]accuracy is 73.0
+
+Feature set [5, 3] was best, accuracy is 92.0
+
+Using feature(s) [5, 3, 1]accuracy is 83.0
+Using feature(s) [5, 3, 2]accuracy is 79.0
+Using feature(s) [5, 3, 4]accuracy is 84.0
+Using feature(s) [5, 3, 6]accuracy is 82.0
+Using feature(s) [5, 3, 7]accuracy is 89.0
+Using feature(s) [5, 3, 8]accuracy is 79.0
+Using feature(s) [5, 3, 9]accuracy is 82.0
+
+Finished search!! The best feature subset is [5, 3] which has an accuracy of 92.0

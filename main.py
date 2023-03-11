@@ -3,8 +3,8 @@ import pandas as pd
 import numpy as np
 import math
 
-def read_in_data():
-    data_frame = pd.read_csv("CS170_Spring_2022_Small_data__35.txt",header = None, delim_whitespace=True)
+def read_in_data(file_name):
+    data_frame = pd.read_csv(file_name, header = None, delim_whitespace=True)
     #print(data_frame)
 
     return data_frame
@@ -12,6 +12,8 @@ def read_in_data():
 def get_user_input():
     print("Welcome to Alexander Kaattari-Lim, 862161616 Feature Selection Algorithm.\n")
     int_feature_count = int(input("Please enter total number of features: "))
+
+    file_name = input("Type in the name of the file to test: ")
 
     print("Type the number of the algorithm you want to run.")
     print("\t1. Forward Selection")
@@ -26,7 +28,7 @@ def get_user_input():
         int_algo_choice = int(input("Choice of algorithm:"))
 
 
-    return int_feature_count, int_algo_choice
+    return file_name, int_feature_count, int_algo_choice
 
 # def leave_one_out_cross_validation(data, current_set_of_features, k+1):
 #     return random_accuracy()
@@ -42,11 +44,11 @@ def forward_selection(data_frame, num_columns):
     max_accuracy = -1
     file_handle = open_file()
 
-    for i in range(1, num_columns):
+    for i in range(1, num_columns - 1):
         curr_accuracy = 0
         considered_features = []
 
-        for j in range(1, num_columns):
+        for j in range(1, num_columns - 1):
             
             if j not in current_feature_set:
                 temp_curr_set = current_feature_set.copy()
@@ -70,6 +72,9 @@ def forward_selection(data_frame, num_columns):
 
             max_accuracy = candidate_feature[1]
             current_feature_set = candidate_feature[0].copy()
+
+        else:
+            break
 
     print("\nFinished search!! The best feature subset is", current_feature_set,"which has an accuracy of", max_accuracy)
     content_to_write = "\nFinished search!! The best feature subset is " + str(current_feature_set) + " which has an accuracy of " + str(max_accuracy)
@@ -113,7 +118,7 @@ def backward_elimination(data_frame,num_columns):
         
         candidate_feature = get_max_accuracy_tuple(considered_features_to_remove)
 
-        print("\n")
+        #print("\n")
 
         if candidate_feature[1] > max_accuracy:
             print("Feature set", candidate_feature[0], "was best, accuracy is", candidate_feature[1], "\n")
@@ -188,33 +193,33 @@ def euclidian_distance(point1, point2):
 
     return distance
 
-def leave_one_out_cross_validation(data_set, considered_feature_set):
-    number_correctly_classified = 0
-    considered_feature_set_values = []
-    data_set_labels = data_set[0].values
+# def leave_one_out_cross_validation(data_set, considered_feature_set):
+#     number_correctly_classified = 0
+#     considered_feature_set_values = []
+#     data_set_labels = data_set[0].values
     
-    # for i in range(len(considered_feature_set)):
-    #     considered_feature_set_values.append(data_set[considered_feature_set[i]])
+#     # for i in range(len(considered_feature_set)):
+#     #     considered_feature_set_values.append(data_set[considered_feature_set[i]])
     
-    # considered_feature_set_values = np.array(considered_feature_set_values)
+#     # considered_feature_set_values = np.array(considered_feature_set_values)
 
-    considered_feature_set_values = data_set[considered_feature_set].values
-    print(considered_feature_set_values)
+#     considered_feature_set_values = data_set[considered_feature_set].values
+#     print(considered_feature_set_values)
 
-    for i in range(len(considered_feature_set_values)):
-        object_to_classify = considered_feature_set_values[i]
-        object_to_classify_label = data_set_labels[i]
+#     for i in range(len(considered_feature_set_values)):
+#         object_to_classify = considered_feature_set_values[i]
+#         object_to_classify_label = data_set_labels[i]
 
-        for k in range (len(considered_feature_set_values)):
+#         for k in range (len(considered_feature_set_values)):
             
-            if k != i:
-                predicted_label = knn_classifier(considered_feature_set_values[k], object_to_classify,data_set_labels[k], 1)
+#             if k != i:
+#                 predicted_label = knn_classifier(considered_feature_set_values[k], object_to_classify,data_set_labels[k], 1)
 
-        if object_to_classify_label == predicted_label[0][1]:
-            number_correctly_classified += 1
+#         if object_to_classify_label == predicted_label[0][1]:
+#             number_correctly_classified += 1
     
-    accuracy = number_correctly_classified / len(data_set)
-    return accuracy
+#     accuracy = number_correctly_classified / len(data_set)
+#     return accuracy
 
 def leave_one_out(data_set, considered_feature_set):
 
@@ -265,13 +270,17 @@ def main():
     file_handle = open("results.txt", "w")
     file_handle.close()
 
-    data_frame = read_in_data()
-    #print(data_frame)
-    data_frame = feature_normalization(data_frame)
-    print(data_frame)
+    file_name, feature_count, algo_choice = get_user_input()
 
-    backward_elimination(data_frame, len(data_frame.columns))
-    #forward_selection(data_frame, len(data_frame.columns))
+    data_frame = read_in_data(file_name)
+    data_frame = feature_normalization(data_frame)
+
+    if algo_choice == 1:
+        forward_selection(data_frame, len(data_frame.columns))
+    
+    elif algo_choice == 2:
+        backward_elimination(data_frame, len(data_frame.columns))
+
 
     file_handle.close()
 
